@@ -1,0 +1,209 @@
+﻿<Window x:Class="Cuaderno_de_BitácorAPP.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Cuaderno_de_BitácorAPP"
+        mc:Ignorable="d"
+        Closing="Window_Closing"
+        WindowStartupLocation="CenterScreen"        
+        Title="MainWindow" Height="500" Width="1000">
+
+    <Window.CommandBindings>
+        <CommandBinding Command="Delete" Executed="CommandBindingDelete_Executed" 
+                        CanExecute="CommandBindingDelete_CanExecute"/>
+        <CommandBinding Command="{x:Static local:ComandosCustom.AddToAlbum}" Executed="CommandBindingAddToAlbum_Executed"
+                        CanExecute="CommandBindingAddToAlbum_CanExecute"/>
+    </Window.CommandBindings>
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="DiccionarioRecursosBotonesMainWindow.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <Grid>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="250"/>
+        </Grid.ColumnDefinitions>
+
+        <Border Grid.Column="0" CornerRadius="10,10,10,10" Background="Blue" BorderThickness="1" MinWidth="100">
+
+            <TreeView Name="treeViewForAlbums" Grid.Column="0" FontSize="20" Margin="5" MinWidth="50">
+
+                <TreeView.Background>
+                    <ImageBrush ImageSource="pack://application:,,,/Resources/fondo_azul2.jpg" Stretch="Fill"/>
+                </TreeView.Background>
+
+                <TreeView.Resources>
+                    <HierarchicalDataTemplate DataType="{x:Type local:Album}" ItemsSource="{Binding Imagenes}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{Binding Nombre}" Foreground="MediumVioletRed" FontSize="24"/>
+                            <TextBlock Text=" [" Foreground="Violet" FontSize="24"/>
+                            <TextBlock Text="{Binding Imagenes.Count}" Foreground="Violet" FontSize="24"/>
+                            <TextBlock Text="]" Foreground="Violet" FontSize="24"/>
+                        </StackPanel>
+                    </HierarchicalDataTemplate>
+
+                    <DataTemplate DataType="{x:Type local:Imagen}">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="{Binding RutaImagen}" MaxHeight="50" MaxWidth="50" 
+                                   Stretch="Fill" Margin="2.5"/>
+
+                            <TextBlock Text=" "/>
+                            <TextBlock Text="{Binding Nombre}" FontStyle="Italic" Foreground="White" FontSize="20"
+                                       PreviewMouseRightButtonDown="selectTreeViewItem_PreviewMouseRightButtonDown"
+                                       Margin="0,0,5,0">
+                                <TextBlock.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem Header="Mostrar Detalles" Foreground="Red" FontWeight="DemiBold"
+                                                  FontSize="18" Click="ShowPhotoDetails_Click">
+                                            <MenuItem.Icon>
+                                                <Image Source="pack://application:,,,/Resources/info.png"/>
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                        <MenuItem Foreground="Red" FontWeight="DemiBold" FontSize="18"
+                                                  Command="Delete">
+                                            <MenuItem.Icon>
+                                                <Image Source="pack://application:,,,/Resources/basuraGris.png"/>
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                        <MenuItem Header="Imprimir Imagen" Foreground="Red" FontWeight="DemiBold"
+                                                  FontSize="18" Click="PrintImage_Click">
+                                            <MenuItem.Icon>
+                                                <Image Source="pack://application:,,,/Resources/impresora.png"/>
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                    </ContextMenu>
+                                </TextBlock.ContextMenu>
+                            </TextBlock>
+
+                        </StackPanel>
+                    </DataTemplate>
+                </TreeView.Resources>
+            </TreeView>
+        </Border>
+
+        <GridSplitter Grid.Column="0" ResizeDirection="Columns" Background="Red" Width="5" Height="20" ToolTip="Scroll"/>
+
+        <Border Grid.Column="1" CornerRadius="10,10,10,10" Background="Blue" BorderThickness="1">
+            <Grid Name="uniformGridForAlbums" Margin="5">
+
+                <TextBlock x:Name="textBoxForEmptyUniformGrid"
+                           HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="35"
+                           Foreground="GreenYellow" FontStyle="Oblique" Panel.ZIndex="1" TextWrapping="Wrap"><Run Text="Todavía no ha creado ningún "/><Run Text="á"/><Run Text="lbum"/></TextBlock>
+
+                <ListBox Name="listBoxForUniformGrid" HorizontalContentAlignment="Stretch"
+                         ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                         ScrollViewer.VerticalScrollBarVisibility="Disabled">
+                    <ListBox.Background>
+                        <ImageBrush ImageSource="pack://application:,,,/Resources/fondo_azul.jpg" Stretch="Fill"/>
+                    </ListBox.Background>
+
+                    <ListBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <UniformGrid SizeChanged="UniformGrid_SizeChanged"/>
+                        </ItemsPanelTemplate>
+                    </ListBox.ItemsPanel>
+
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="ListBoxItem">
+                            <Style.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="IsSelected" Value="True"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ListBox.ItemContainerStyle>
+
+                    <ListBox.ItemTemplate>
+                        <DataTemplate DataType="{x:Type local:Album}">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+
+                                <Border Name="mask" CornerRadius="15" Margin="2.5"                                      
+                                        Height="{Binding ElementName=imageFromResources, Path=ActualHeight}" 
+                                        Width="{Binding ElementName=imageFromResources, Path=ActualWidth}">
+                                    <Border.Background>
+                                        <ImageBrush ImageSource="pack://application:,,,/Resources/fotoAlbum.jpg"
+                                                    Stretch="Fill"/>
+                                    </Border.Background>
+                                    <Grid>
+
+                                        <Image Name="imageFromResources"
+                                               Source="pack://application:,,,/Resources/fotoAlbum.jpg" Stretch="Fill"
+                                               MouseLeftButtonDown="TextBlock_MouseLeftButtonDown" Cursor="Hand"
+                                               MaxHeight="400" MaxWidth="450" ToolTip="click para abrir este álbum">
+                                            <Image.ContextMenu>
+                                                <ContextMenu>
+                                                    <MenuItem Command="local:ComandosCustom.AddToAlbum"/>
+                                                </ContextMenu>
+                                            </Image.ContextMenu>
+                                            <Image.OpacityMask>
+                                                <VisualBrush Visual="{Binding ElementName=mask}"/>
+                                            </Image.OpacityMask>
+                                        </Image>
+
+                                        <Image Source="pack://application:,,,/Resources/añadirFotosalAlbum.png"
+                                               MaxHeight="25" MaxWidth="20" VerticalAlignment="Top" 
+                                               HorizontalAlignment="Left" Margin="5" Cursor="Hand"
+                                               ToolTip="Añadir más fotos a este álbum">
+                                            <Image.InputBindings>
+                                                <MouseBinding Gesture="LeftClick"
+                                                              Command="local:ComandosCustom.AddToAlbum"/>
+                                            </Image.InputBindings>
+                                        </Image>
+
+                                        <Image Source="pack://application:,,,/Resources/eliminarAlbum.jpg"
+                                               MaxHeight="25" MaxWidth="20" VerticalAlignment="Top"
+                                               HorizontalAlignment="Right" Margin="5" Cursor="Hand"
+                                               ToolTip="Eliminar este álbum">
+                                            <Image.InputBindings>
+                                                <MouseBinding Gesture="LeftClick" Command="Delete"/>
+                                            </Image.InputBindings>
+                                        </Image>
+                                    </Grid>
+                                </Border>
+
+                                <TextBlock Name="AlbumNameLabel" Text="{Binding Nombre}" Foreground="AliceBlue"
+                                           Grid.Row="1" HorizontalAlignment="Center" FontSize="20"
+                                           FontStyle="Italic" TextDecorations="Underline" TextWrapping="Wrap"
+                                           MouseLeftButtonDown="TextBlock_MouseLeftButtonDown" Cursor="Hand"
+                                           Style="{StaticResource texblockForAlbumNameStyle}"/>
+
+                            </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+
+                </ListBox>
+
+            </Grid>
+        </Border>
+
+        <Border Grid.Column="2" CornerRadius="10,10,10,10" Background="Blue" BorderThickness="1">
+            <Grid Background="GhostWhite" Margin="5">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <Button x:Name="createAlbumButton" Grid.Row="0" Content="Nuevo álbum" Click="createAlbumButton_Click"
+                        VerticalAlignment="Center" Template="{StaticResource RoundButton}" 
+                        Style="{StaticResource ButtonStyle}" ToolTip="Crear un nuevo álbum" 
+                        HorizontalAlignment="Center" Margin="5" Width="115" Cursor="Hand"/>
+
+                <Image Source="pack://application:,,,/Resources/mano_arriba.png" Grid.Row="1"
+                       Stretch="Fill" Width="218" HorizontalAlignment="Center" Margin="10,0"/>
+            </Grid>
+        </Border>
+
+    </Grid>
+</Window>

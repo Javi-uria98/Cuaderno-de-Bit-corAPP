@@ -1,0 +1,31 @@
+﻿<Window x:Class="Cuaderno_de_BitácorAPP.VentanaNuevoAlbum"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Cuaderno_de_BitácorAPP"
+        mc:Ignorable="d"
+        Title="Input (Nombre)" Width="250" Height="150"
+        WindowStartupLocation="CenterScreen"        
+        ContentRendered="Window_ContentRendered"
+        ResizeMode="NoResize">
+
+    <Grid Background="Black">
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Label Grid.Row="0" HorizontalAlignment="Center" FontStyle="Italic" FontSize="16" Foreground="OrangeRed" Content="Nombre del álbum nuevo"/>
+        <TextBox Name="textAnswer" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap" Margin="5" Foreground="Blue" FontSize="16">Introduzca el nombre aquí</TextBox>
+        <WrapPanel Grid.Row="2" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="5">
+            <Button IsDefault="True" Name="dialogOkButton" Click="dialogOkButton_Click" Margin="0,0,10,0" MinWidth="40" FontSize="14">_Ok</Button>
+            <Button IsCancel="True" MinWidth="40" FontSize="14">_Cancel</Button>
+        </WrapPanel>
+
+    </Grid>
+</Window>
+
+
